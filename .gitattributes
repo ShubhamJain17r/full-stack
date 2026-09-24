@@ -1,0 +1,69 @@
+# Auto-detect text files and normalize line endings to LF on commit
+* text=auto eol=lf
+
+# -----------------------------------------------------------------------------
+# Web & Source Code
+# -----------------------------------------------------------------------------
+*.html                  text diff=html
+*.htm                   text diff=html
+*.css                   text diff=css
+*.scss                  text diff=css
+*.sass                  text diff=css
+*.less                  text diff=css
+*.js                    text
+*.jsx                   text
+*.ts                    text
+*.tsx                   text
+*.mjs                   text
+*.cjs                   text
+*.json                  text
+*.md                    text
+*.txt                   text
+*.xml                   text
+*.svg                   text
+*.yml                   text
+*.yaml                  text
+
+# -----------------------------------------------------------------------------
+# Configuration Files
+# -----------------------------------------------------------------------------
+.editorconfig           text
+.gitattributes          text
+.gitignore              text
+.gitmessage             text
+
+# -----------------------------------------------------------------------------
+# Binary Media Files (prevents Git from converting line endings)
+# -----------------------------------------------------------------------------
+*.png                   binary
+*.jpg                   binary
+*.jpeg                  binary
+*.gif                   binary
+*.ico                   binary
+*.webp                  binary
+*.avif                  binary
+*.mp4                   binary
+*.webm                  binary
+*.mp3                   binary
+*.wav                   binary
+*.pdf                   binary
+*.zip                   binary
+*.tar.gz                binary
+*.rar                   binary
+
+# -----------------------------------------------------------------------------
+# Web Fonts
+# -----------------------------------------------------------------------------
+*.woff                  binary
+*.woff2                 binary
+*.ttf                   binary
+*.eot                   binary
+*.otf                   binary
+
+# -----------------------------------------------------------------------------
+# Git Export Ignore (excluded when creating zip archives via git archive)
+# -----------------------------------------------------------------------------
+.gitattributes          export-ignore
+.gitignore              export-ignore
+.gitmessage             export-ignore
+.github                 export-ignore

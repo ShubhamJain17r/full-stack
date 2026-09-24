@@ -1,0 +1,17 @@
+# <type>(<scope>): <subject>
+# Example: notes(html): add semantic tags reference
+# Example: task(24-sep): implement rocket animation and responsive navbar
+#
+# Allowed types:
+#   notes    : Class notes, theoretical explanations, cheatsheets
+#   task     : Daily tasks, lab assignments, homework problems
+#   feat     : New feature, interactive widget, or webpage
+#   fix      : Bug fix in CSS layout, broken link, JS logic error
+#   style    : CSS styling tweaks, formatting, animations (no logic change)
+#   refactor : Code cleanup or reorganization without changing behavior
+#   docs     : Updates to README, documentation, or comments
+#
+# Remember:
+#   - Keep the summary line concise (under 50-72 chars)
+#   - Use present tense ("add" not "added", "fix" not "fixed")
+# -------------------------------------------------------------
