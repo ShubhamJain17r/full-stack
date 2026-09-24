@@ -1,0 +1,84 @@
+      /* ==============================
+           CUSTOM CSS
+           Only for animations and effects
+        ============================== */
+
+      body {
+        background-color: #050816;
+        color: white;
+      }
+
+      /* Navigation hover transition */
+      .nav-link {
+        transition: all 0.3s ease;
+      }
+
+      .nav-link:hover {
+        color: #0dcaf0 !important;
+        transform: translateY(-3px);
+      }
+
+      /* Rocket animation */
+      .rocket {
+        font-size: 120px;
+        animation: rocketMove 3s ease-in-out infinite;
+      }
+
+      @keyframes rocketMove {
+        0% {
+          transform: translateY(20px) rotate(-5deg);
+        }
+
+        50% {
+          transform: translateY(-30px) rotate(5deg);
+        }
+
+        100% {
+          transform: translateY(20px) rotate(-5deg);
+        }
+      }
+
+      /* Astronaut animation */
+      .astronaut {
+        font-size: 60px;
+        animation: astronautMove 5s ease-in-out infinite;
+      }
+
+      @keyframes astronautMove {
+        0% {
+          transform: translate(0, 0) rotate(-5deg);
+        }
+
+        50% {
+          transform: translate(20px, -25px) rotate(8deg);
+        }
+
+        100% {
+          transform: translate(0, 0) rotate(-5deg);
+        }
+      }
+
+      /* Rocket flame */
+      .flame {
+        font-size: 40px;
+        animation: flame 0.3s infinite alternate;
+      }
+
+      @keyframes flame {
+        from {
+          transform: scale(0.8);
+        }
+
+        to {
+          transform: scale(1.2);
+        }
+      }
+
+      /* Card hover transition */
+      .feature-card {
+        transition: all 0.3s ease;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-10px);
+      }
