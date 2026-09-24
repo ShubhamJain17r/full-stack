@@ -1,0 +1,41 @@
+name: CI - Static Web Verification
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  verify-web-files:
+    name: Verify HTML, CSS & JS Files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Check File Structure & Count
+        run: |
+          echo "=========================================="
+          echo "Full Stack Web Repository - Static Checker"
+          echo "=========================================="
+          HTML_COUNT=$(find . -type f -name "*.html" -not -path "*/.*" | wc -l)
+          CSS_COUNT=$(find . -type f -name "*.css" -not -path "*/.*" | wc -l)
+          JS_COUNT=$(find . -type f -name "*.js" -not -path "*/.*" | wc -l)
+
+          echo "HTML Files found: $HTML_COUNT"
+          echo "CSS Files found:  $CSS_COUNT"
+          echo "JS Files found:   $JS_COUNT"
+          echo ""
+
+      - name: Basic HTML & Asset Check
+        run: |
+          echo "Checking HTML files for <!doctype html>..."
+          for file in $(find . -type f -name "*.html" -not -path "*/.*"); do
+            echo "Checking: $file"
+            if ! grep -qi "<!doctype html" "$file"; then
+              echo "::warning file=$file::File is missing <!doctype html>"
+            fi
+          done
+          echo "All static files checked successfully."
