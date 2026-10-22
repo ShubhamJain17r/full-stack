@@ -7,7 +7,48 @@
 </head>
 <body>
     <script>
-        
+        const students = [
+            { name: "Rahul", marks: 85 },
+            { name: "Priya", marks: 32 },
+            { name: "Amit", marks: 67 },
+            { name: "Sneha", marks: 90 },
+            { name: "Kiran", marks: 28 }
+        ];
+
+        // 6. Use an IIFE to display the final report.
+        (function (students) {
+            // 1. Create a function that accepts the student array.
+            function generate_student_report(students) {
+                // const students_with_grace = students.map(student => student.marks = Math.min(student.marks + 5, 100));
+
+                // 2. Use map() to add 5 grace marks to every student, without allowing marks to exceed 100.
+                const students_with_grace = students.map(student => ({
+                    ...student,
+                    marks : Math.min(student.marks + 5, 100)
+                }));
+                console.log(students_with_grace);
+    
+                // 3. Use filter() to select students who scored at least 40 marks after adding grace marks.
+                const passing_student = students_with_grace.filter(students => students.marks >= 40);
+                console.log(passing_student);
+    
+                // 4. Use reduce() to calculate the average marks of the passing students.
+                const len = passing_student.length;
+                // console.log(len);
+                const sum = passing_student.reduce((total, student) => total + student.marks, 0);
+                // console.log(sum);
+    
+                const avg = len > 0 ? sum / len : 0;
+                console.log(avg);
+                
+                // 5. Use forEach() to display each passing student's name and final marks.
+                passing_student.forEach(student => console.log(`Name : ${student.name} \t| Marks : ${student.marks}`));
+                console.log(`Average marks : ${avg}`);
+            }
+
+            generate_student_report(students);
+
+        })(students);
     </script>
 </body>
 </html>
