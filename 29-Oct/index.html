@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>29-Oct - JavaScript Practice</title>
+</head>
+<body>
+    <h1>JavaScript Practice — 29 October</h1>
+    <p>Open the browser console to see the output of the exercises. </p>
+    <script>
+        // 1. Take input from the user (number or string) and display it.
+        const input = prompt("Enter a number or string");
+        if (input !== null) {
+            document.write(input.trim());
+        }
+        
+
+        // 2. Reverse the number 58342 and calculate the sum of its digits using a while loop.
+        var num = 58342;
+        var reverse = 0;
+        var sum = 0;
+
+        while (num > 0) {
+            const digit = num % 10;
+            reverse = reverse * 10 + digit;
+            sum += digit;
+            num = Math.trunc(num / 10);
+        }
+
+        console.log(`Reversed number: ${reverse}`);
+        console.log(`Sum of digits: ${sum}`);
+
+        // 3. Count the digits of 9087654 and count how many digits are even or odd.
+        var num = 9087654;
+        var total = 0;
+        var even = 0;
+        var odd = 0;
+
+        while (num > 0) {
+            const digit = num % 10;
+            total++;
+
+            if (digit % 2 === 0) {
+                even++;
+            } else {
+                odd++;
+            }
+
+            num = Math.trunc(num / 10);
+        }
+
+        console.log(`Total digits: ${total}`);
+        console.log(`Even digits: ${even}`);
+        console.log(`Odd digits: ${odd}`);
+
+        // 4. Use do...while to print 5, 10, 15, ..., 100 and calculate their sum.
+        var num = 5;
+        var total = 0;
+
+        do {
+            console.log(num);
+            total += num;
+            num += 5;
+        } while (num <= 100);
+
+        console.log(`Sum of sequence: ${total}`);
+
+        // 5. Use do...while to print the digits of 4827 in reverse order, one digit at a time.
+        var num = 4827;
+
+        do {
+            console.log(num % 10);
+            num = Math.trunc(num / 10);
+        } while (num > 0);
+
+        // 6. Print each character of the string "java" using for...of.
+        const str = "java";
+
+        for (const char of str) {
+            console.log(char);
+        }
+
+        // 7. Print all prime numbers between 1 and 100.
+        for (var num = 2; num <= 100; num++) {
+            var isPrime = true;
+
+            for (var i = 2; i <= Math.sqrt(num); i++) {
+                if (num % i === 0) {
+                    isPrime = false;
+                    break;
+                }
+            }
+
+            if (isPrime) {
+                console.log(num);
+            }
+        }
+
+        // 8. Find all Armstrong numbers between 100 and 999.
+        for (var num = 100; num <= 999; num++) {
+            var temp = num;
+            var sum = 0;
+
+            while (temp > 0) {
+                const digit = temp % 10;
+                sum += digit ** 3;
+                temp = Math.trunc(temp / 10);
+            }
+
+            if (sum === num) {
+                console.log(num);
+            }
+        }
+
+        // 9. Using for...of, calculate the sum of positive numbers, sum of negative numbers, and count of zeroes.
+        const numbers = [12, -5, 0, 23, -18, 0, 7, -2, 15];
+        var positiveSum = 0;
+        var negativeSum = 0;
+        var zeroCount = 0;
+
+        for (const num of numbers) {
+            if (num > 0) {
+                positiveSum += num;
+            } else if (num < 0) {
+                negativeSum += num;
+            } else {
+                zeroCount++;
+            }
+        }
+
+        console.log(`Sum of positive numbers: ${positiveSum}`);
+        console.log(`Sum of negative numbers: ${negativeSum}`);
+        console.log(`Count of zeroes: ${zeroCount}`);
+
+        // 10. Using for...of, calculate total marks, average marks, number of students who passed (marks >= 40), maximum, and minimum.
+        const marks = [85, 32, 67, 90, 28, 76, 45];
+        var total = 0;
+        var passed = 0;
+        var max = -Infinity;
+        var min = Infinity;
+        var count = 0;
+
+        for (const mark of marks) {
+            total += mark;
+            count++;
+
+            if (mark >= 40) {
+                passed++;
+            }
+
+            if (mark > max) {
+                max = mark;
+            }
+
+            if (mark < min) {
+                min = mark;
+            }
+        }
+
+        console.log(`Total marks: ${total}`);
+        console.log(`Average marks: ${total / count}`);
+        console.log(`Students passed: ${passed}`);
+        console.log(`Maximum marks: ${max}`);
+        console.log(`Minimum marks: ${min}`);
+    </script>
+</body>
+</html>
