@@ -21,15 +21,58 @@ body {
     align-items: center;
     gap: 12px;
     padding: 24px 16px;
+    width: 100%;
 }
 
 /* Interactive Utility Toolbar */
 .calculator-toolbar {
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: space-between;
+    width: 580px;
+    max-width: 95vw;
+    transition: width 0.25s ease;
+}
+
+.mode-basic .calculator-toolbar {
     width: 330px;
-    justify-content: flex-end;
+}
+
+.mode-switch-group {
+    background: #e2e5e8;
+    border-radius: 16px;
+    padding: 2px;
+    display: inline-flex;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.mode-btn {
+    background: transparent;
+    border: none;
+    border-radius: 14px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #4b5259;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.mode-btn:hover {
+    color: #111827;
+}
+
+.mode-btn.active {
+    background: #ffffff;
+    color: #1f2937;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .tool-btn {
@@ -87,13 +130,19 @@ body {
 /* Calculator Body */
 .calculator {
     position: relative;
-    width: 330px;
+    width: 580px;
+    max-width: 95vw;
     background-color: #8c9196;
     border: 2.5px solid #4a4e53;
     border-radius: 18px;
     padding: 16px;
     box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
     overflow: hidden;
+    transition: width 0.25s ease;
+}
+
+.calculator.mode-basic {
+    width: 330px;
 }
 
 /* Screen Display */
@@ -110,7 +159,7 @@ body {
     align-items: flex-end;
     overflow: hidden;
     cursor: pointer;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
 .calculator-screen:hover {
@@ -121,12 +170,31 @@ body {
 .screen-header {
     width: 100%;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     position: absolute;
     top: 6px;
-    left: 10px;
-    pointer-events: none;
+    left: 0;
+    padding: 0 10px;
+}
+
+.angle-badge {
+    background: #e0e7ff;
+    border: 1px solid #c7d2fe;
+    color: #3730a3;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+    line-height: 1;
+}
+
+.angle-badge:hover {
+    background: #c7d2fe;
+    border-color: #6366f1;
 }
 
 .copy-hint {
@@ -140,6 +208,7 @@ body {
     opacity: 0;
     transform: translateY(-3px);
     transition: opacity 0.18s ease, transform 0.18s ease;
+    pointer-events: none;
 }
 
 .calculator-screen:hover .copy-hint {
@@ -169,6 +238,11 @@ body {
 .copy-toast.show {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
+}
+
+.copy-toast.error {
+    background: rgba(220, 38, 38, 0.95);
+    color: #ffffff;
 }
 
 .previous-operand {
@@ -238,9 +312,63 @@ body {
     animation: resultPop 0.22s ease-out;
 }
 
-.copy-toast.error {
-    background: rgba(220, 38, 38, 0.95);
-    color: #ffffff;
+/* Main Keypad Wrapper */
+.keypad-wrapper {
+    display: grid;
+    grid-template-columns: 216px 1fr;
+    gap: 12px;
+    align-items: start;
+}
+
+.calculator.mode-basic .keypad-wrapper {
+    grid-template-columns: 1fr;
+}
+
+.calculator.mode-basic .scientific-panel {
+    display: none;
+}
+
+/* Scientific Keypad Panel */
+.scientific-panel {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.btn-sci {
+    height: 50px;
+    background-color: #e2e6eb;
+    color: #22262a;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.btn-sci:hover {
+    background-color: #d1d8e0;
+    border-color: #2b2e32;
+    color: #111827;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.btn-angle-toggle {
+    background-color: #dbeafe;
+    color: #1e40af;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.btn-angle-toggle:hover {
+    background-color: #bfdbfe;
+    border-color: #2563eb;
+    color: #1e3a8a;
+}
+
+/* Standard Keypad Panel */
+.standard-panel {
+    display: flex;
+    flex-direction: column;
 }
 
 /* Top Buttons: CLEAR & DELETE */
@@ -542,8 +670,10 @@ body {
 .shortcuts-content {
     position: relative;
     background: #ffffff;
-    width: 320px;
+    width: 360px;
     max-width: 90vw;
+    max-height: 85vh;
+    overflow-y: auto;
     border-radius: 14px;
     padding: 18px;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
@@ -612,4 +742,26 @@ body {
     font-weight: 600;
     color: #1f2937;
     font-family: monospace;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 620px) {
+    .calculator,
+    .calculator-toolbar {
+        width: 100%;
+        max-width: 360px;
+    }
+
+    .keypad-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .scientific-panel {
+        margin-top: 10px;
+        order: 2;
+    }
+
+    .standard-panel {
+        order: 1;
+    }
 }

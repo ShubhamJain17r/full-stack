@@ -1,8 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
     // DOM Elements
+    const calculator = document.getElementById("calculator");
     const screenElement = document.getElementById("calculator-screen");
     const previousOperandTextElement = document.getElementById("previous-operand");
     const currentOperandTextElement = document.getElementById("current-operand");
+    const angleBadge = document.getElementById("angle-badge");
+    const btnAngleToggle = document.getElementById("btn-angle-toggle");
     const copyToast = document.getElementById("copy-toast");
     const soundToggle = document.getElementById("sound-toggle");
     const soundIcon = document.getElementById("sound-icon");
@@ -16,11 +19,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const shortcutsModal = document.getElementById("shortcuts-modal");
     const btnCloseShortcuts = document.getElementById("btn-close-shortcuts");
     const shortcutsBackdrop = document.getElementById("shortcuts-backdrop");
+    const btnModeSci = document.getElementById("btn-mode-sci");
+    const btnModeBasic = document.getElementById("btn-mode-basic");
 
     // Constants
     const MAX_DIGITS = 15;
 
-    // State Variables
+    // State
     let currentOperand = "270";
     let previousOperand = "";
     let operation = undefined;
@@ -29,11 +34,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let isErrorState = false;
     let errorMessage = "";
     let soundEnabled = true;
+    let angleMode = "DEG"; // 'DEG' or 'RAD'
     let history = [
         { equation: "260 + 10 =", result: "270" }
     ];
 
-    // Web Audio Synthesizer for tactile feedback
+    // Web Audio Synthesizer
     let audioCtx = null;
 
     function initAudio() {
@@ -47,9 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (audioCtx && audioCtx.state === "suspended") {
                 audioCtx.resume();
             }
-        } catch (e) {
-            // Audio context not supported or blocked
-        }
+        } catch (e) {}
     }
 
     function playSound(type = "number") {
@@ -76,6 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     osc.stop(now + 0.04);
                     break;
                 case "operator":
+                case "sci":
                     osc.type = "sine";
                     osc.frequency.setValueAtTime(880, now);
                     osc.frequency.exponentialRampToValueAtTime(440, now + 0.06);
@@ -120,9 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     osc.stop(now + 0.25);
                     break;
             }
-        } catch (e) {
-            // Audio failure handled silently
-        }
+        } catch (e) {}
     }
 
     // Ripple click wave effect
@@ -141,9 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
             circle.style.top = `${y - size / 2}px`;
 
             const existingRipple = button.querySelector(".ripple");
-            if (existingRipple) {
-                existingRipple.remove();
-            }
+            if (existingRipple) existingRipple.remove();
 
             button.appendChild(circle);
             setTimeout(() => circle.remove(), 450);
@@ -190,10 +191,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function triggerErrorShake() {
         screenElement.classList.remove("shake");
-        void screenElement.offsetWidth; // trigger reflow
+        void screenElement.offsetWidth;
         screenElement.classList.add("shake");
         playSound("error");
         setTimeout(() => screenElement.classList.remove("shake"), 360);
+    }
+
+    function triggerResultPop() {
+        currentOperandTextElement.classList.remove("pop");
+        void currentOperandTextElement.offsetWidth;
+        currentOperandTextElement.classList.add("pop");
+        playSound("equals");
+        setTimeout(() => currentOperandTextElement.classList.remove("pop"), 250);
     }
 
     // Dynamic Font Resizing for Long Numbers
@@ -205,11 +214,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const len = (currentOperand || "").length;
-        if (len > 12) {
-            currentOperandTextElement.style.fontSize = "26px";
+        if (len > 14) {
+            currentOperandTextElement.style.fontSize = "24px";
             currentOperandTextElement.style.lineHeight = "48px";
-        } else if (len > 9) {
-            currentOperandTextElement.style.fontSize = "34px";
+        } else if (len > 10) {
+            currentOperandTextElement.style.fontSize = "32px";
             currentOperandTextElement.style.lineHeight = "48px";
         } else {
             currentOperandTextElement.style.fontSize = "46px";
@@ -254,20 +263,49 @@ document.addEventListener("DOMContentLoaded", () => {
         updateActiveOperator();
     }
 
-    function triggerResultPop() {
-        currentOperandTextElement.classList.remove("pop");
-        void currentOperandTextElement.offsetWidth;
-        currentOperandTextElement.classList.add("pop");
-        playSound("equals");
-        setTimeout(() => currentOperandTextElement.classList.remove("pop"), 250);
-    }
-
-    // Safe Digit Count (excluding signs and decimals)
     function getDigitCount(val) {
         return (val || "").toString().replace(/[^0-9]/g, "").length;
     }
 
-    // Calculator Operations with Guarded Input & Error Handling
+    function formatNumber(num) {
+        if (!isFinite(num)) return null;
+        if (Math.abs(num) > 1e14 || (Math.abs(num) < 1e-6 && num !== 0)) {
+            return num.toExponential(6).replace(/\.?0+e/, "e");
+        }
+        const rounded = Math.round((num + Number.EPSILON) * 1e10) / 1e10;
+        return rounded.toString();
+    }
+
+    // Angle Mode Toggle (DEG / RAD)
+    function toggleAngleMode() {
+        angleMode = angleMode === "DEG" ? "RAD" : "DEG";
+        angleBadge.textContent = angleMode;
+        btnAngleToggle.textContent = angleMode === "DEG" ? "RAD" : "DEG";
+        showToast(`Angle Mode: ${angleMode}`);
+        playSound("operator");
+    }
+
+    angleBadge.addEventListener("click", toggleAngleMode);
+    btnAngleToggle.addEventListener("click", toggleAngleMode);
+
+    // Mode Switcher (Scientific vs Basic)
+    btnModeSci.addEventListener("click", () => {
+        calculator.classList.remove("mode-basic");
+        calculator.classList.add("mode-scientific");
+        btnModeSci.classList.add("active");
+        btnModeBasic.classList.remove("active");
+        playSound("operator");
+    });
+
+    btnModeBasic.addEventListener("click", () => {
+        calculator.classList.remove("mode-scientific");
+        calculator.classList.add("mode-basic");
+        btnModeBasic.classList.add("active");
+        btnModeSci.classList.remove("active");
+        playSound("operator");
+    });
+
+    // Calculator Basic Operations
     function clear() {
         playSound("clear");
         clearErrorState();
@@ -325,7 +363,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Check maximum digit length limit
         if (getDigitCount(currentOperand) >= MAX_DIGITS) {
             triggerErrorShake();
             showToast(`Max ${MAX_DIGITS} digits reached`, true);
@@ -365,7 +402,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Prevent multiple decimals
         if (currentOperand.includes(".")) {
             triggerErrorShake();
             showToast("Decimal already added", true);
@@ -381,6 +417,143 @@ document.addEventListener("DOMContentLoaded", () => {
         updateDisplay();
     }
 
+    // Insert Constants (Pi and e)
+    function insertConstant(type) {
+        clearErrorState();
+        playSound("sci");
+
+        if (type === "pi") {
+            currentOperand = Math.PI.toString();
+        } else if (type === "e") {
+            currentOperand = Math.E.toString();
+        }
+
+        isCalculated = false;
+        updateDisplay();
+    }
+
+    // Scientific Single-Argument (Unary) Functions
+    function executeSciFunction(fn) {
+        if (isErrorState) {
+            triggerErrorShake();
+            showToast("Clear error first", true);
+            return;
+        }
+
+        const val = parseFloat(currentOperand);
+        if (isNaN(val)) return;
+
+        let result;
+        let eqName;
+
+        switch (fn) {
+            case "sin": {
+                eqName = `sin(${currentOperand})`;
+                const rad = angleMode === "DEG" ? (val * Math.PI) / 180 : val;
+                if (angleMode === "DEG" && val % 180 === 0) {
+                    result = 0;
+                } else {
+                    result = Math.sin(rad);
+                }
+                break;
+            }
+            case "cos": {
+                eqName = `cos(${currentOperand})`;
+                const rad = angleMode === "DEG" ? (val * Math.PI) / 180 : val;
+                if (angleMode === "DEG" && (val - 90) % 180 === 0) {
+                    result = 0;
+                } else {
+                    result = Math.cos(rad);
+                }
+                break;
+            }
+            case "tan": {
+                eqName = `tan(${currentOperand})`;
+                if (angleMode === "DEG" && (val - 90) % 180 === 0) {
+                    setCalculationError("Undefined (tan 90°)", `${eqName} =`);
+                    return;
+                }
+                const rad = angleMode === "DEG" ? (val * Math.PI) / 180 : val;
+                result = Math.tan(rad);
+                break;
+            }
+            case "sqrt": {
+                eqName = `√(${currentOperand})`;
+                if (val < 0) {
+                    setCalculationError("Cannot take √ of negative", `${eqName} =`);
+                    return;
+                }
+                result = Math.sqrt(val);
+                break;
+            }
+            case "sqr": {
+                eqName = `sqr(${currentOperand})`;
+                result = val * val;
+                break;
+            }
+            case "reciprocal": {
+                eqName = `1/(${currentOperand})`;
+                if (val === 0) {
+                    setCalculationError("Cannot divide by 0", `${eqName} =`);
+                    return;
+                }
+                result = 1 / val;
+                break;
+            }
+            case "log": {
+                eqName = `log(${currentOperand})`;
+                if (val <= 0) {
+                    setCalculationError("Log requires positive value", `${eqName} =`);
+                    return;
+                }
+                result = Math.log10(val);
+                break;
+            }
+            case "ln": {
+                eqName = `ln(${currentOperand})`;
+                if (val <= 0) {
+                    setCalculationError("Ln requires positive value", `${eqName} =`);
+                    return;
+                }
+                result = Math.log(val);
+                break;
+            }
+            case "factorial": {
+                eqName = `${currentOperand}!`;
+                if (!Number.isInteger(val) || val < 0) {
+                    setCalculationError("Factorial requires integer ≥ 0", `${eqName} =`);
+                    return;
+                }
+                if (val > 170) {
+                    setCalculationError("Overflow Error (n > 170)", `${eqName} =`);
+                    return;
+                }
+                let fact = 1;
+                for (let i = 2; i <= val; i++) {
+                    fact *= i;
+                }
+                result = fact;
+                break;
+            }
+            default:
+                return;
+        }
+
+        const formatted = formatNumber(result);
+        if (formatted === null) {
+            setCalculationError("Overflow Error", `${eqName} =`);
+            return;
+        }
+
+        lastEquation = `${eqName} =`;
+        currentOperand = formatted;
+        isCalculated = true;
+        addHistoryItem(lastEquation, currentOperand);
+        triggerResultPop();
+        updateDisplay();
+    }
+
+    // Binary Operation Selection
     function chooseOperation(op) {
         if (isErrorState) {
             triggerErrorShake();
@@ -390,7 +563,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         playSound("operator");
 
-        // Allow changing operator before entering second operand
         if (currentOperand === "" && previousOperand !== "") {
             operation = op;
             lastEquation = "";
@@ -400,10 +572,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (currentOperand === "") return;
 
-        // Intermediate calculation if chained (e.g., 5 + 5 + 5)
         if (previousOperand !== "") {
             const success = compute(false);
-            if (!success) return; // Error occurred during intermediate evaluation
+            if (!success) return;
         }
 
         operation = op;
@@ -420,9 +591,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return false;
         }
 
-        // Incomplete equation handling
         if (previousOperand !== "" && (currentOperand === "" || currentOperand == null)) {
-            // Default: use the previous operand as the second operand (standard calculator behavior)
             currentOperand = previousOperand;
         }
 
@@ -430,10 +599,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const current = parseFloat(currentOperand);
 
         if (isNaN(prev) || isNaN(current)) {
-            if (isFinal) {
-                // No operation pending, just acknowledge current value
-                triggerResultPop();
-            }
+            if (isFinal) triggerResultPop();
             return false;
         }
 
@@ -451,7 +617,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 break;
             case "÷":
             case "/":
-                // Arithmetic Error 1: Division by Zero
                 if (current === 0) {
                     if (prev === 0) {
                         setCalculationError("Result is undefined", "0 ÷ 0 =");
@@ -462,29 +627,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 computation = prev / current;
                 break;
+            case "^":
+                computation = Math.pow(prev, current);
+                if (isNaN(computation)) {
+                    setCalculationError("Invalid Calculation (Complex)", `${prev} ^ ${current} =`);
+                    return false;
+                }
+                break;
             default:
                 return false;
         }
 
-        // Arithmetic Error 2: Overflow / Infinity
         if (!isFinite(computation) || Math.abs(computation) > Number.MAX_VALUE) {
             setCalculationError("Overflow Error", `${prev} ${operation} ${current} =`);
             return false;
         }
 
-        // Arithmetic Error 3: NaN
         if (isNaN(computation)) {
             setCalculationError("Invalid Calculation", `${prev} ${operation} ${current} =`);
             return false;
         }
 
-        // Precision Rounding to eliminate floating point artifacts (e.g. 0.1 + 0.2)
-        let roundedStr;
-        if (Math.abs(computation) > 1e14 || (Math.abs(computation) < 1e-6 && computation !== 0)) {
-            roundedStr = computation.toExponential(6).replace(/\.?0+e/, "e");
-        } else {
-            const rounded = Math.round((computation + Number.EPSILON) * 1e10) / 1e10;
-            roundedStr = rounded.toString();
+        const roundedStr = formatNumber(computation);
+        if (roundedStr === null) {
+            setCalculationError("Overflow Error", `${prev} ${operation} ${current} =`);
+            return false;
         }
 
         if (isFinal) {
@@ -547,7 +714,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function addHistoryItem(equation, result) {
         try {
             history.unshift({ equation, result });
-            if (history.length > 20) history.pop();
+            if (history.length > 25) history.pop();
             renderHistory();
         } catch (e) {}
     }
@@ -641,13 +808,12 @@ document.addEventListener("DOMContentLoaded", () => {
         copyValueToClipboard(textToCopy);
     });
 
-    // Clipboard Paste Validation & Error Handling
+    // Clipboard Paste Validation
     window.addEventListener("paste", (e) => {
         try {
             const pastedText = (e.clipboardData || window.clipboardData).getData("text").trim();
             if (!pastedText) return;
 
-            // Validate that the pasted content is a legitimate number
             const parsedNum = Number(pastedText);
             if (!isNaN(parsedNum) && isFinite(parsedNum) && pastedText.length <= 20) {
                 clearErrorState();
@@ -684,6 +850,18 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll("[data-operator]").forEach((button) => {
         button.addEventListener("click", () => {
             chooseOperation(button.getAttribute("data-operator"));
+        });
+    });
+
+    document.querySelectorAll("[data-sci-fn]").forEach((button) => {
+        button.addEventListener("click", () => {
+            executeSciFunction(button.getAttribute("data-sci-fn"));
+        });
+    });
+
+    document.querySelectorAll("[data-constant]").forEach((button) => {
+        button.addEventListener("click", () => {
+            insertConstant(button.getAttribute("data-constant"));
         });
     });
 
@@ -736,11 +914,75 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        if (e.key === "d" || e.key === "D") {
+            toggleAngleMode();
+            return;
+        }
+
         if (e.key === "?") {
             shortcutsToggle.click();
             return;
         }
 
+        // Scientific shortcuts
+        const lowerKey = e.key.toLowerCase();
+        if (lowerKey === "s") {
+            executeSciFunction("sin");
+            triggerButtonFeedback('[data-sci-fn="sin"]');
+            return;
+        }
+        if (lowerKey === "o") {
+            executeSciFunction("cos");
+            triggerButtonFeedback('[data-sci-fn="cos"]');
+            return;
+        }
+        if (lowerKey === "t") {
+            executeSciFunction("tan");
+            triggerButtonFeedback('[data-sci-fn="tan"]');
+            return;
+        }
+        if (lowerKey === "r") {
+            executeSciFunction("sqrt");
+            triggerButtonFeedback('[data-sci-fn="sqrt"]');
+            return;
+        }
+        if (lowerKey === "q") {
+            executeSciFunction("sqr");
+            triggerButtonFeedback('[data-sci-fn="sqr"]');
+            return;
+        }
+        if (lowerKey === "l") {
+            executeSciFunction("log");
+            triggerButtonFeedback('[data-sci-fn="log"]');
+            return;
+        }
+        if (lowerKey === "n") {
+            executeSciFunction("ln");
+            triggerButtonFeedback('[data-sci-fn="ln"]');
+            return;
+        }
+        if (lowerKey === "p") {
+            insertConstant("pi");
+            triggerButtonFeedback('[data-constant="pi"]');
+            return;
+        }
+        if (lowerKey === "e" && !e.ctrlKey && !e.metaKey) {
+            insertConstant("e");
+            triggerButtonFeedback('[data-constant="e"]');
+            return;
+        }
+        if (e.key === "!") {
+            executeSciFunction("factorial");
+            triggerButtonFeedback('[data-sci-fn="factorial"]');
+            return;
+        }
+        if (e.key === "^") {
+            chooseOperation("^");
+            triggerButtonFeedback('[data-operator="^"]');
+            return;
+        }
+
+        // Standard Numbers & Operators
         if (e.key >= "0" && e.key <= "9") {
             appendNumber(e.key);
             triggerButtonFeedback(`[data-number="${e.key}"]`);
@@ -768,7 +1010,7 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             deleteDigit();
             triggerButtonFeedback("#btn-delete");
-        } else if (e.key.toLowerCase() === "c") {
+        } else if (lowerKey === "c") {
             clear();
             triggerButtonFeedback("#btn-clear");
         }

@@ -3,32 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator - 16 November</title>
+    <title>Scientific Calculator - 16 November</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <main class="calculator-container">
         <!-- Interactive Utility Toolbar -->
         <header class="calculator-toolbar" aria-label="Calculator controls">
-            <button type="button" class="tool-btn" id="sound-toggle" title="Toggle Sound Feedback (M)" aria-label="Toggle Sound">
-                <span class="tool-icon" id="sound-icon">🔊</span>
-                <span class="tool-label">Sound</span>
-            </button>
-            <button type="button" class="tool-btn" id="history-toggle" title="Calculation History (H)" aria-label="Calculation History">
-                <span class="tool-icon">🕒</span>
-                <span class="tool-label">History</span>
-                <span class="history-badge" id="history-badge" style="display: none;">0</span>
-            </button>
-            <button type="button" class="tool-btn" id="shortcuts-toggle" title="Keyboard Shortcuts (?)" aria-label="Keyboard Shortcuts">
-                <span class="tool-icon">⌨️</span>
-                <span class="tool-label">Shortcuts</span>
-            </button>
+            <!-- Mode Selector: Scientific vs Basic -->
+            <div class="mode-switch-group" role="group" aria-label="Calculator Mode">
+                <button type="button" class="mode-btn active" id="btn-mode-sci" title="Switch to Scientific Mode">Scientific</button>
+                <button type="button" class="mode-btn" id="btn-mode-basic" title="Switch to Basic Mode">Basic</button>
+            </div>
+
+            <div class="toolbar-actions">
+                <button type="button" class="tool-btn" id="sound-toggle" title="Toggle Sound Feedback (M)" aria-label="Toggle Sound">
+                    <span class="tool-icon" id="sound-icon">🔊</span>
+                    <span class="tool-label">Sound</span>
+                </button>
+                <button type="button" class="tool-btn" id="history-toggle" title="Calculation History (H)" aria-label="Calculation History">
+                    <span class="tool-icon">🕒</span>
+                    <span class="tool-label">History</span>
+                    <span class="history-badge" id="history-badge" style="display: none;">0</span>
+                </button>
+                <button type="button" class="tool-btn" id="shortcuts-toggle" title="Keyboard Shortcuts (?)" aria-label="Keyboard Shortcuts">
+                    <span class="tool-icon">⌨️</span>
+                    <span class="tool-label">Shortcuts</span>
+                </button>
+            </div>
         </header>
 
-        <div class="calculator" id="calculator">
-            <!-- Display Area with Interactive Copy & Feedback -->
+        <div class="calculator mode-scientific" id="calculator">
+            <!-- Display Area with Dual Line, Angle Indicator & Interactive Copy -->
             <div class="calculator-screen" id="calculator-screen" title="Click to copy result" role="region" aria-live="polite">
                 <div class="screen-header">
+                    <button type="button" class="angle-badge" id="angle-badge" title="Click to toggle DEG / RAD mode">DEG</button>
                     <span class="copy-hint" id="copy-hint">📋 Copy</span>
                 </div>
                 <div class="previous-operand" id="previous-operand">260 + 10 =</div>
@@ -36,33 +45,62 @@
                 <div class="copy-toast" id="copy-toast">Copied! ✨</div>
             </div>
 
-            <!-- Top Action Buttons: CLEAR & DELETE -->
-            <div class="top-actions">
-                <button type="button" class="btn btn-clear" id="btn-clear" data-action="clear" title="Clear all (Escape or C)">CLEAR</button>
-                <button type="button" class="btn btn-delete" id="btn-delete" data-action="delete" title="Delete last digit (Backspace)">DELETE</button>
-            </div>
+            <!-- Main Keypads Container -->
+            <div class="keypad-wrapper" id="keypad-wrapper">
+                <!-- Scientific Keypad Panel -->
+                <div class="scientific-panel" id="scientific-panel">
+                    <button type="button" class="btn btn-sci btn-angle-toggle" id="btn-angle-toggle" title="Toggle Angle Mode (DEG/RAD)">RAD</button>
+                    <button type="button" class="btn btn-sci" data-action="paren-open" title="Open Parenthesis">(</button>
+                    <button type="button" class="btn btn-sci" data-action="paren-close" title="Close Parenthesis">)</button>
 
-            <!-- Keypad: Numbers and Operators Grid -->
-            <div class="keypad-grid">
-                <button type="button" class="btn btn-key btn-num" data-number="7">7</button>
-                <button type="button" class="btn btn-key btn-num" data-number="8">8</button>
-                <button type="button" class="btn btn-key btn-num" data-number="9">9</button>
-                <button type="button" class="btn btn-key btn-operator" data-operator="÷" title="Divide (/)">÷</button>
+                    <button type="button" class="btn btn-sci" data-sci-fn="sin" title="Sine (sin)">sin</button>
+                    <button type="button" class="btn btn-sci" data-sci-fn="cos" title="Cosine (cos)">cos</button>
+                    <button type="button" class="btn btn-sci" data-sci-fn="tan" title="Tangent (tan)">tan</button>
 
-                <button type="button" class="btn btn-key btn-num" data-number="4">4</button>
-                <button type="button" class="btn btn-key btn-num" data-number="5">5</button>
-                <button type="button" class="btn btn-key btn-num" data-number="6">6</button>
-                <button type="button" class="btn btn-key btn-operator" data-operator="×" title="Multiply (*)">×</button>
+                    <button type="button" class="btn btn-sci" data-sci-fn="ln" title="Natural Logarithm (ln)">ln</button>
+                    <button type="button" class="btn btn-sci" data-sci-fn="log" title="Common Logarithm (log10)">log</button>
+                    <button type="button" class="btn btn-sci" data-sci-fn="reciprocal" title="Reciprocal (1/x)">1/x</button>
 
-                <button type="button" class="btn btn-key btn-num" data-number="1">1</button>
-                <button type="button" class="btn btn-key btn-num" data-number="2">2</button>
-                <button type="button" class="btn btn-key btn-num" data-number="3">3</button>
-                <button type="button" class="btn btn-key btn-operator" data-operator="-" title="Subtract (-)">-</button>
+                    <button type="button" class="btn btn-sci" data-constant="e" title="Euler's Constant (e ≈ 2.71828)">e</button>
+                    <button type="button" class="btn btn-sci" data-sci-fn="sqr" title="Square (x²)">x²</button>
+                    <button type="button" class="btn btn-sci btn-operator" data-operator="^" title="Power (xʸ)">xʸ</button>
 
-                <button type="button" class="btn btn-key btn-num" data-action="decimal" title="Decimal point (.)">.</button>
-                <button type="button" class="btn btn-key btn-num" data-number="0">0</button>
-                <button type="button" class="btn btn-key btn-equals" data-action="equals" title="Calculate (Enter or =)">=</button>
-                <button type="button" class="btn btn-key btn-operator" data-operator="+" title="Add (+)">+</button>
+                    <button type="button" class="btn btn-sci" data-constant="pi" title="Pi Constant (π ≈ 3.14159)">π</button>
+                    <button type="button" class="btn btn-sci" data-sci-fn="sqrt" title="Square Root (√)">√</button>
+                    <button type="button" class="btn btn-sci" data-sci-fn="factorial" title="Factorial (n!)">n!</button>
+                </div>
+
+                <!-- Standard Keypad Panel -->
+                <div class="standard-panel" id="standard-panel">
+                    <!-- Top Action Buttons: CLEAR & DELETE -->
+                    <div class="top-actions">
+                        <button type="button" class="btn btn-clear" id="btn-clear" data-action="clear" title="Clear all (Escape or C)">CLEAR</button>
+                        <button type="button" class="btn btn-delete" id="btn-delete" data-action="delete" title="Delete last character (Backspace)">DELETE</button>
+                    </div>
+
+                    <!-- Keypad: Numbers and Operators Grid -->
+                    <div class="keypad-grid">
+                        <button type="button" class="btn btn-key btn-num" data-number="7">7</button>
+                        <button type="button" class="btn btn-key btn-num" data-number="8">8</button>
+                        <button type="button" class="btn btn-key btn-num" data-number="9">9</button>
+                        <button type="button" class="btn btn-key btn-operator" data-operator="÷" title="Divide (/)">÷</button>
+
+                        <button type="button" class="btn btn-key btn-num" data-number="4">4</button>
+                        <button type="button" class="btn btn-key btn-num" data-number="5">5</button>
+                        <button type="button" class="btn btn-key btn-num" data-number="6">6</button>
+                        <button type="button" class="btn btn-key btn-operator" data-operator="×" title="Multiply (*)">×</button>
+
+                        <button type="button" class="btn btn-key btn-num" data-number="1">1</button>
+                        <button type="button" class="btn btn-key btn-num" data-number="2">2</button>
+                        <button type="button" class="btn btn-key btn-num" data-number="3">3</button>
+                        <button type="button" class="btn btn-key btn-operator" data-operator="-" title="Subtract (-)">-</button>
+
+                        <button type="button" class="btn btn-key btn-num" data-action="decimal" title="Decimal point (.)">.</button>
+                        <button type="button" class="btn btn-key btn-num" data-number="0">0</button>
+                        <button type="button" class="btn btn-key btn-equals" data-action="equals" title="Calculate (Enter or =)">=</button>
+                        <button type="button" class="btn btn-key btn-operator" data-operator="+" title="Add (+)">+</button>
+                    </div>
+                </div>
             </div>
 
             <!-- History Slide-over Panel -->
@@ -90,13 +128,24 @@
                 </div>
                 <ul class="shortcuts-list">
                     <li><kbd>0</kbd> – <kbd>9</kbd> <span>Enter numbers</span></li>
-                    <li><kbd>+</kbd> <kbd>-</kbd> <kbd>*</kbd> <kbd>/</kbd> <span>Operators</span></li>
+                    <li><kbd>+</kbd> <kbd>-</kbd> <kbd>*</kbd> <kbd>/</kbd> <kbd>^</kbd> <span>Arithmetic Operators</span></li>
+                    <li><kbd>(</kbd> <kbd>)</kbd> <span>Parentheses</span></li>
                     <li><kbd>Enter</kbd> or <kbd>=</kbd> <span>Calculate result</span></li>
                     <li><kbd>Backspace</kbd> <span>Delete last character</span></li>
                     <li><kbd>Esc</kbd> or <kbd>C</kbd> <span>Clear calculator</span></li>
-                    <li><kbd>.</kbd> <span>Decimal point</span></li>
-                    <li><kbd>M</kbd> <span>Toggle sound on/off</span></li>
-                    <li><kbd>H</kbd> <span>Toggle calculation history</span></li>
+                    <li><kbd>S</kbd> <span>Sine (sin)</span></li>
+                    <li><kbd>O</kbd> <span>Cosine (cos)</span></li>
+                    <li><kbd>T</kbd> <span>Tangent (tan)</span></li>
+                    <li><kbd>R</kbd> <span>Square root (√)</span></li>
+                    <li><kbd>Q</kbd> <span>Square (x²)</span></li>
+                    <li><kbd>L</kbd> <span>Log base 10 (log)</span></li>
+                    <li><kbd>N</kbd> <span>Natural log (ln)</span></li>
+                    <li><kbd>P</kbd> <span>Pi constant (π)</span></li>
+                    <li><kbd>E</kbd> <span>Euler's number (e)</span></li>
+                    <li><kbd>!</kbd> <span>Factorial (n!)</span></li>
+                    <li><kbd>D</kbd> <span>Toggle DEG / RAD</span></li>
+                    <li><kbd>M</kbd> <span>Toggle sound</span></li>
+                    <li><kbd>H</kbd> <span>Toggle history</span></li>
                 </ul>
             </div>
         </div>
