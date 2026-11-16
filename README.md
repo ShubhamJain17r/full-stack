@@ -17,6 +17,10 @@ full-stack/
 ├── 24-Sep/                  # Class: Space Explorer Landing Page
 │   ├── index.html           # HTML5 structure & Bootstrap 5 components
 │   └── style.css            # Custom CSS animations & keyframes
+├── 16-Nov/                  # Task: Interactive Calculator
+│   ├── index.html           # Calculator structure & display layout
+│   ├── style.css            # Visual styling, grid layout & button themes
+│   └── script.js            # Calculator logic, arithmetic engine & keyboard support
 ├── .editorconfig            # Code indentation & formatting rules
 ├── .gitattributes           # Git line-ending normalization & file types
 ├── .gitignore               # Ignored files (OS, IDE, browser & server caches)
@@ -33,6 +37,7 @@ full-stack/
 | Date | Topic / Project | Key Concepts | Files |
 | :--- | :--- | :--- | :--- |
 | **24-Sep** | **Space Explorer Landing Page** | Bootstrap 5 Navbar, Hero section, CSS Keyframe Animations (`rocketMove`, `astronautMove`), Responsive Design | [index.html](file:///home/shubham/full-stack/24-Sep/index.html) • [style.css](file:///home/shubham/full-stack/24-Sep/style.css) |
+| **16-Nov** | **Interactive Calculator** | HTML5 Semantic Layout, CSS Grid & Flexbox, Dual Display Screen, Hover & Ripple Effects, Web Audio Synthesizer, Calculation History Drawer, Comprehensive Error Handling & Input Validation, Keyboard Shortcuts | [index.html](file:///home/shubham/full-stack/16-Nov/index.html) • [style.css](file:///home/shubham/full-stack/16-Nov/style.css) • [script.js](file:///home/shubham/full-stack/16-Nov/script.js) |
 
 *(More classes, notes, and JavaScript exercises will be added here as the course progresses).*
 

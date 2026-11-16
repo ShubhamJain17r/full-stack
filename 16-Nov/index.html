@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator - 16 November</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="calculator-container">
+        <!-- Interactive Utility Toolbar -->
+        <header class="calculator-toolbar" aria-label="Calculator controls">
+            <button type="button" class="tool-btn" id="sound-toggle" title="Toggle Sound Feedback (M)" aria-label="Toggle Sound">
+                <span class="tool-icon" id="sound-icon">🔊</span>
+                <span class="tool-label">Sound</span>
+            </button>
+            <button type="button" class="tool-btn" id="history-toggle" title="Calculation History (H)" aria-label="Calculation History">
+                <span class="tool-icon">🕒</span>
+                <span class="tool-label">History</span>
+                <span class="history-badge" id="history-badge" style="display: none;">0</span>
+            </button>
+            <button type="button" class="tool-btn" id="shortcuts-toggle" title="Keyboard Shortcuts (?)" aria-label="Keyboard Shortcuts">
+                <span class="tool-icon">⌨️</span>
+                <span class="tool-label">Shortcuts</span>
+            </button>
+        </header>
+
+        <div class="calculator" id="calculator">
+            <!-- Display Area with Interactive Copy & Feedback -->
+            <div class="calculator-screen" id="calculator-screen" title="Click to copy result" role="region" aria-live="polite">
+                <div class="screen-header">
+                    <span class="copy-hint" id="copy-hint">📋 Copy</span>
+                </div>
+                <div class="previous-operand" id="previous-operand">260 + 10 =</div>
+                <div class="current-operand" id="current-operand">270</div>
+                <div class="copy-toast" id="copy-toast">Copied! ✨</div>
+            </div>
+
+            <!-- Top Action Buttons: CLEAR & DELETE -->
+            <div class="top-actions">
+                <button type="button" class="btn btn-clear" id="btn-clear" data-action="clear" title="Clear all (Escape or C)">CLEAR</button>
+                <button type="button" class="btn btn-delete" id="btn-delete" data-action="delete" title="Delete last digit (Backspace)">DELETE</button>
+            </div>
+
+            <!-- Keypad: Numbers and Operators Grid -->
+            <div class="keypad-grid">
+                <button type="button" class="btn btn-key btn-num" data-number="7">7</button>
+                <button type="button" class="btn btn-key btn-num" data-number="8">8</button>
+                <button type="button" class="btn btn-key btn-num" data-number="9">9</button>
+                <button type="button" class="btn btn-key btn-operator" data-operator="÷" title="Divide (/)">÷</button>
+
+                <button type="button" class="btn btn-key btn-num" data-number="4">4</button>
+                <button type="button" class="btn btn-key btn-num" data-number="5">5</button>
+                <button type="button" class="btn btn-key btn-num" data-number="6">6</button>
+                <button type="button" class="btn btn-key btn-operator" data-operator="×" title="Multiply (*)">×</button>
+
+                <button type="button" class="btn btn-key btn-num" data-number="1">1</button>
+                <button type="button" class="btn btn-key btn-num" data-number="2">2</button>
+                <button type="button" class="btn btn-key btn-num" data-number="3">3</button>
+                <button type="button" class="btn btn-key btn-operator" data-operator="-" title="Subtract (-)">-</button>
+
+                <button type="button" class="btn btn-key btn-num" data-action="decimal" title="Decimal point (.)">.</button>
+                <button type="button" class="btn btn-key btn-num" data-number="0">0</button>
+                <button type="button" class="btn btn-key btn-equals" data-action="equals" title="Calculate (Enter or =)">=</button>
+                <button type="button" class="btn btn-key btn-operator" data-operator="+" title="Add (+)">+</button>
+            </div>
+
+            <!-- History Slide-over Panel -->
+            <div class="history-panel" id="history-panel" aria-hidden="true">
+                <div class="history-panel-header">
+                    <h3>History</h3>
+                    <div class="history-panel-actions">
+                        <button type="button" class="btn-history-clear" id="btn-clear-history" title="Clear all history">Clear</button>
+                        <button type="button" class="btn-history-close" id="btn-close-history" title="Close history panel">✕</button>
+                    </div>
+                </div>
+                <div class="history-list" id="history-list">
+                    <p class="history-empty">No calculations yet</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keyboard Shortcuts Modal Dialog -->
+        <div class="shortcuts-modal" id="shortcuts-modal" aria-hidden="true">
+            <div class="shortcuts-backdrop" id="shortcuts-backdrop"></div>
+            <div class="shortcuts-content">
+                <div class="shortcuts-header">
+                    <h3>Keyboard Shortcuts</h3>
+                    <button type="button" class="btn-shortcuts-close" id="btn-close-shortcuts">✕</button>
+                </div>
+                <ul class="shortcuts-list">
+                    <li><kbd>0</kbd> – <kbd>9</kbd> <span>Enter numbers</span></li>
+                    <li><kbd>+</kbd> <kbd>-</kbd> <kbd>*</kbd> <kbd>/</kbd> <span>Operators</span></li>
+                    <li><kbd>Enter</kbd> or <kbd>=</kbd> <span>Calculate result</span></li>
+                    <li><kbd>Backspace</kbd> <span>Delete last character</span></li>
+                    <li><kbd>Esc</kbd> or <kbd>C</kbd> <span>Clear calculator</span></li>
+                    <li><kbd>.</kbd> <span>Decimal point</span></li>
+                    <li><kbd>M</kbd> <span>Toggle sound on/off</span></li>
+                    <li><kbd>H</kbd> <span>Toggle calculation history</span></li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
