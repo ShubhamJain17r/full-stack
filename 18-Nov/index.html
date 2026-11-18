@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asynchronous</title>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Fetch server data</h1>
+        <button onclick="fetchdata()">Click Me</button>
+        <h1 id="result"></h1>
+    </div>
+
+    <script>
+        let serverData = {
+            name: "Shubham",
+            course: "B.Tech",
+            rollNo: "2415001556"
+        };
+
+        let placeholder = document.getElementById("result");
+
+        function fetchdata() {
+
+            placeholder.textContent = "Loading...";
+
+            let promise = new Promise((resolve, reject) => {
+
+                setTimeout(() => {
+                    if (serverData) {
+                        resolve(serverData);
+                    } else {
+                        reject("Could not get server data");
+                    }
+                }, 3000);
+
+            });
+
+            promise.then((data) => {
+                placeholder.textContent =
+                    `Name: ${data.name}, Course: ${data.course}, Roll No: ${data.rollNo}`;
+            });
+
+            promise.catch((err) => {
+                placeholder.textContent = err;
+            });
+        }
+    </script>
+
+</body>
+</html>
